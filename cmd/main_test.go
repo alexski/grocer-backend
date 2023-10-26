@@ -5,12 +5,10 @@ import (
 	"os"
 	"testing"
 
-	main "github.com/alexski/grocer-backend"
+	backend "github.com/alexski/grocer-backend"
 )
 
-// "github.com/<github username>/<project name>"
-
-var a main.App
+var a backend.App
 
 func TestMain(m *testing.M) {
 	a.Initialize(
