@@ -6,15 +6,24 @@ import (
 	"testing"
 
 	"grocer-backend/app"
+
+	"github.com/joho/godotenv"
 )
 
 var a app.App
 
 func TestMain(m *testing.M) {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	a.Initialize(
-		os.Getenv("APP_DB_USERNAME"),
-		os.Getenv("APP_DB_PASSWORD"),
-		os.Getenv("APP_DB_NAME"))
+		os.Getenv("POSTGRES_USER"),
+		os.Getenv("POSTGRES_PASSWORD"),
+		os.Getenv("POSTGRES_DB"),
+		os.Getenv("POSTGRES_HOST"),
+		os.Getenv("POSTGRES_PORT"))
 
 	ensureTableExists()
 	code := m.Run()
