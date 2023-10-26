@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"grocer-backend/app"
 	"grocer-backend/handler"
 
 	"github.com/joho/godotenv"
@@ -21,7 +22,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	a := App{}
+	a := app.App{}
 	a.Initialize(
 		os.Getenv("POSTGRES_USER"),
 		os.Getenv("POSTGRES_PASSWORD"),
