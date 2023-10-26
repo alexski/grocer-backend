@@ -1,3 +1,3 @@
-module github.com/alexski/grocer-backend/model
+module grocer-backend/model
 
 go 1.21.3

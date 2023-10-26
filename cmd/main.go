@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	"baran/handler"
+	"grocer-backend/handler"
 
 	"github.com/joho/godotenv"
 )
