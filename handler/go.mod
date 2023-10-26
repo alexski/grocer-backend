@@ -1,3 +1,3 @@
-module baran/handler
+module github.com/alexski/grocer-backend
 
-go 1.20
+go 1.21.3

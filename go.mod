@@ -1,17 +1,15 @@
-module baran/grocer
+module github.com/alexski/grocer-backend
 
-go 1.20
+go 1.21.3
 
 replace baran/handler => ./handler
 replace baran/model => ./model
-replace baran/main => ./cmd
 
 replace baran/database => ./database
 
 require (
 	baran/handler v0.0.0-00010101000000-000000000000
 	baran/model v0.0.0-00010101000000-000000000000
-	baran/main v0.0.0-00010101000000-000000000000
 	github.com/joho/godotenv v1.5.1
 )
 
