@@ -38,6 +38,12 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/user/{id:[0-9]+}", a.GetUser).Methods("GET")
 	a.Router.HandleFunc("/user/{id:[0-9]+}", a.UpdateUser).Methods("PUT")
 	a.Router.HandleFunc("/user/{id:[0-9]+}", a.DeleteUser).Methods("DELETE")
+
+	a.Router.HandleFunc("/recipes", a.GetRecipes).Methods("GET")
+	a.Router.HandleFunc("/recipe", a.CreateRecipe).Methods("POST")
+	a.Router.HandleFunc("/recipe/{id:[0-9]+}", a.GetRecipe).Methods("GET")
+	a.Router.HandleFunc("/recipe/{id:[0-9]+}", a.UpdateRecipe).Methods("PUT")
+	a.Router.HandleFunc("/recipe/{id:[0-9]+}", a.DeleteRecipe).Methods("DELETE")
 }
 
 // Simply starts the application
