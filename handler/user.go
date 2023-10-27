@@ -7,23 +7,6 @@ import (
 	"strings"
 )
 
-type user struct {
-	ID           int    `json:"id"`
-	Username     string `json:"username"`
-	PasswordHash string `json:"password"`
-}
-
-func SingleUser(w http.ResponseWriter, r *http.Request) {
-	switch method := r.Method; method {
-	case http.MethodGet:
-		GetSingleUser(w, r)
-		return
-	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-}
-
 func GetSingleUser(w http.ResponseWriter, r *http.Request) {
 	p := strings.Split(r.URL.Path, "/")
 	if len(p) < 3 {
