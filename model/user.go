@@ -10,26 +10,26 @@ type User struct {
 	PasswordHash string `json:"password"`
 }
 
-func (u *User) getUser(db *sql.DB) error {
+func (u *User) GetUser(db *sql.DB) error {
 	return db.QueryRow("SELECT username, password_hash FROM users WHERE id=$1", u.ID).Scan(&u.Username, &u.PasswordHash)
 }
 
-func (u *User) updateUser(db *sql.DB) error {
+func (u *User) UpdateUser(db *sql.DB) error {
 	_, err := db.Exec("UPDATE users SET username=$1, password_hash=$2 WHERE id=$3", u.Username, u.PasswordHash, u.ID)
 	return err
 }
 
-func (u *User) deleteUser(db *sql.DB) error {
+func (u *User) DeleteUser(db *sql.DB) error {
 	_, err := db.Exec("DELETE FROM users id=$1", u.ID)
 	return err
 }
 
-func (u *User) createUser(db *sql.DB) error {
+func (u *User) CreateUser(db *sql.DB) error {
 	err := db.QueryRow("INSERT INTO users (username, password_hash) values ('$1', '$2') RETURNING id", u.Username, u.PasswordHash).Scan(&u.ID)
 	return err
 }
 
-func getUsers(db *sql.DB, start, count int) ([]User, error) {
+func GetUsers(db *sql.DB, start, count int) ([]User, error) {
 	rows, err := db.Query(
 		"SELECT id, username, password_hash FROM users LIMIT $1 OFFSET $2",
 		count, start)

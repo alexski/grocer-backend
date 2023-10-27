@@ -3,11 +3,10 @@ package handler
 import (
 	"database/sql"
 	"fmt"
+	"grocer-backend/model"
 	"log"
 	"net/http"
 	"strconv"
-
-	"grocer-backend/model"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -36,7 +35,7 @@ func (a *App) Initialize(user string, password string, dbname string, host strin
 	a.initializeRoutes()
 }
 
-func (a *App) getUser(w http.ResponseWriter, r *http.Request) {
+func (a *App) GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	id, err := strconv.Atoi(vars["id"])
@@ -46,7 +45,7 @@ func (a *App) getUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u := model.User{ID: id}
-	if err := u.getUser(a.DB); err != nil {
+	if err := u.GetUser(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "User not found")
@@ -62,7 +61,7 @@ func (a *App) getUser(w http.ResponseWriter, r *http.Request) {
 func (a *App) initializeRoutes() {
 	// a.Router.HandleFunc("/users", a.getUsers).Methods("GET")
 	// a.Router.HandleFunc("/user", createUser).Methods("POST")
-	a.Router.HandleFunc("/user/{id:[0-9]+}", a.getUser).Methods("GET")
+	a.Router.HandleFunc("/user/{id:[0-9]+}", a.GetUser).Methods("GET")
 	// a.Router.HandleFunc("/user/{id:[0-9]+}", a.updateUser).Methods("PUT")
 	// a.Router.HandleFunc("/user/{id:[0-9]+}", a.deleteUser).Methods("DELETE")
 }
