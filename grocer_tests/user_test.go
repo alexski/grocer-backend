@@ -1,76 +1,40 @@
-package main_test
+package grocer_tests
 
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
-	"net/http/httptest"
-	"os"
 	"strconv"
 	"testing"
-
-	"grocer-backend/handler"
-
-	"github.com/joho/godotenv"
 )
 
-var a handler.App
+const userTableCreationQuery = `
+CREATE SEQUENCE IF NOT EXISTS public.users_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
 
-func TestMain(m *testing.M) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	a.Initialize(
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
-		os.Getenv("POSTGRES_DB"),
-		os.Getenv("POSTGRES_HOST"),
-		os.Getenv("POSTGRES_PORT"))
-
-	ensureTableExists()
-	code := m.Run()
-	clearTable()
-	os.Exit(code)
-}
-
-func ensureTableExists() {
-	if _, err := a.DB.Exec(tableCreationQuery); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func clearTable() {
-	a.DB.Exec("DELETE FROM users")
-	a.DB.Exec("ALTER SEQUENCE users_id_seq RESTART WITH 1")
-}
-
-const tableCreationQuery = `CREATE TABLE IF NOT EXISTS public.users
+CREATE TABLE IF NOT EXISTS public.users
 (
     id integer NOT NULL DEFAULT nextval('users_id_seq'::regclass),
     username character varying(100) COLLATE pg_catalog."default" NOT NULL,
     password_hash character varying(100) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT users_pkey PRIMARY KEY (id)
-)
+);
+
+ALTER SEQUENCE public.users_id_seq
+	OWNED BY users.id;
 `
 
-func TestEmptyTable(t *testing.T) {
-	clearTable()
-
-	req, _ := http.NewRequest("GET", "/users", nil)
-	response := executeRequest(req)
-
-	checkResponseCode(t, http.StatusOK, response.Code)
-
-	if body := response.Body.String(); body != "[]" {
-		t.Errorf("Expected an empty array. Got %s", body)
-	}
+func clearUserTable() {
+	a.DB.Exec("DELETE FROM users")
+	a.DB.Exec("ALTER SEQUENCE users_id_seq RESTART WITH 1")
 }
 
 func TestGetNonExistentUser(t *testing.T) {
-	clearTable()
+	clearUserTable()
 
 	req, _ := http.NewRequest("GET", "/user/11", nil)
 	response := executeRequest(req)
@@ -86,7 +50,7 @@ func TestGetNonExistentUser(t *testing.T) {
 
 func TestCreateUser(t *testing.T) {
 
-	clearTable()
+	clearUserTable()
 
 	var jsonStr = []byte(`{"username":"test_user", "password": "test_hash"}`)
 	req, _ := http.NewRequest("POST", "/user", bytes.NewBuffer(jsonStr))
@@ -114,7 +78,7 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestGetUser(t *testing.T) {
-	clearTable()
+	clearUserTable()
 	addUsers(1)
 
 	req, _ := http.NewRequest("GET", "/user/1", nil)
@@ -125,7 +89,7 @@ func TestGetUser(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 
-	clearTable()
+	clearUserTable()
 	addUsers(1)
 
 	req, _ := http.NewRequest("GET", "/user/1", nil)
@@ -158,7 +122,7 @@ func TestUpdateUser(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
-	clearTable()
+	clearUserTable()
 	addUsers(1)
 
 	req, _ := http.NewRequest("GET", "/user/1", nil)
@@ -172,19 +136,6 @@ func TestDeleteUser(t *testing.T) {
 	req, _ = http.NewRequest("GET", "/user/1", nil)
 	response = executeRequest(req)
 	checkResponseCode(t, http.StatusNotFound, response.Code)
-}
-
-func executeRequest(req *http.Request) *httptest.ResponseRecorder {
-	rr := httptest.NewRecorder()
-	a.Router.ServeHTTP(rr, req)
-
-	return rr
-}
-
-func checkResponseCode(t *testing.T, expected, actual int) {
-	if expected != actual {
-		t.Errorf("Expected response code %d. Got %d\n", expected, actual)
-	}
 }
 
 func addUsers(count int) {
