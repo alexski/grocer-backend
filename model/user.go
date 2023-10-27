@@ -20,12 +20,12 @@ func (u *User) UpdateUser(db *sql.DB) error {
 }
 
 func (u *User) DeleteUser(db *sql.DB) error {
-	_, err := db.Exec("DELETE FROM users id=$1", u.ID)
+	_, err := db.Exec("DELETE FROM users WHERE id=$1", u.ID)
 	return err
 }
 
 func (u *User) CreateUser(db *sql.DB) error {
-	err := db.QueryRow("INSERT INTO users (username, password_hash) values ('$1', '$2') RETURNING id", u.Username, u.PasswordHash).Scan(&u.ID)
+	err := db.QueryRow("INSERT INTO users (username, password_hash) values ($1, $2) RETURNING id", u.Username, u.PasswordHash).Scan(&u.ID)
 	return err
 }
 

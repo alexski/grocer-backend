@@ -36,8 +36,6 @@ func main() {
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "API Connected")
 	})
-	router.HandleFunc("/user", handler.GetAllUsers)
-	router.HandleFunc("/user/", handler.GetSingleUser)
 
 	port := ":8080"
 	_, err = strconv.Atoi(os.Getenv("PORT"))

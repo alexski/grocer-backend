@@ -117,7 +117,7 @@ func TestGetUser(t *testing.T) {
 	clearTable()
 	addUsers(1)
 
-	req, _ := http.NewRequest("GET", "/product/1", nil)
+	req, _ := http.NewRequest("GET", "/user/1", nil)
 	response := executeRequest(req)
 
 	checkResponseCode(t, http.StatusOK, response.Code)
@@ -152,7 +152,7 @@ func TestUpdateUser(t *testing.T) {
 		t.Errorf("Expected the name to change from '%v' to '%v'. Got '%v'", ogUser["username"], m["username"], m["username"])
 	}
 
-	if m["price"] == ogUser["password"] {
+	if m["password"] == ogUser["password"] {
 		t.Errorf("Expected the password hash to change from '%v' to '%v'. Got '%v'", ogUser["password"], m["password"], m["password"])
 	}
 }
@@ -167,7 +167,6 @@ func TestDeleteUser(t *testing.T) {
 
 	req, _ = http.NewRequest("DELETE", "/user/1", nil)
 	response = executeRequest(req)
-
 	checkResponseCode(t, http.StatusOK, response.Code)
 
 	req, _ = http.NewRequest("GET", "/user/1", nil)
